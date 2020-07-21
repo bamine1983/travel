@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/switchery/dist/switchery.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/lightbox2/dist/css/lightbox.min.css') }}">
+{% endblock %}
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+    <!-- DOM dataTable -->
+    <div class="widget">
+        <header class="widget-header ">
+            <strong class="widget-title">Utilisateurs</strong>&nbsp;&nbsp;<a href="{{ path('createUser') }}"><button class="btn btn-primary">Ajouter </button></a>
+        </header><!-- .widget-header -->
+        <hr class="widget-separator">
+        <div class="widget-body ">
+            <div class="table-responsive">
+                    <table id="responsive-datatable" data-plugin="DataTable" data-options="{
+									responsive: true,
+									keys: true
+								}" class="table table-striped display" >
+                        <thead>
+                        <tr >
+                            <th>Nom</th>
+                            <th>Role</th>
+                            <th>Poste</th>
+                            <th>Telephone</th>
+                            <th>Inscription</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            {% if user.status%}
+                            <tr>
+                                <td> {{ user.nom }} {{ user.prenom }}</td>
+                                <td>{{ user.role}}</td>
+                                <td>{{ user.poste }}</td>
+                                <td>{{ user.telephone }}</td>
+                                <td>{{ user.inscription | date('d/m/Y') }}</td>
+                                <td>
+                                    <a style="padding-right:0.5cm;" href="{{  path('editUser', {'id': user.id }) }}">Editer</a>
+                                    <input type="checkbox" {% if app.user==user %}disabled{% endif %} class="js-switch" id="cb{{ user.id }}" data-switchery="true" data-size="small" onchange="onchangeIsActive(this)" data-href="{{ path('isActive', {'id': user.id }) }}" {% if user.etat %}checked{% endif %} />
+                                    <a href="#" data-action="{{ user.id }}" {% if app.user==user %}hidden{% endif %} onclick="test(this);"><i class="fa fa-trash" aria-hidden="true" style="color: red; padding-left: 0.5cm;"></i></a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div><!-- .widget-body -->
+    </div><!-- .widget -->
+{% endblock %}
+{% block javascripts %}
+    <script>
+        function test(this_) {
+            var id=$(this_).data('action');
+            swal("Voulez vous supprimez ou archiver cet utilisateur?", {
+                buttons: {
+                    cancel: "Annuler",
+                    catch: {
+                        text: "Archiver !",
+                        value: "archiver",
+                    },
+                    supprimer: true,
+                },
+            })
+                .then((value) => {
+                    switch (value) {
+
+                        case "supprimer":
+                            axios.post('/dashboard/admin/user/'+id+'/supp', {
+                            })
+                                .then((response) => {
+                                    console.log(response);
+                                }, (error) => {
+                                    console.log(error);
+                                });
+                             swal("Suppression !", "Utilisateur Supprimé", "warning").then(function(){
+                                 location.reload();
+                             });
+                             break;
+
+                        case "archiver":
+                            axios.post('/dashboard/admin/user/'+id+'/archive', {
+                            })
+                                .then((response) => {
+                                    console.log(response);
+                                }, (error) => {
+                                    console.log(error);
+                                });
+                            swal("Archive!", "Utilisateur Archivé", "success").then(function(){
+                                location.reload();
+                            });
+                            break;
+                }
+            });
+        }
+    </script>
+    <script>
+        var elems = document.querySelectorAll('.js-switch');
+        for (var i = 0; i < elems.length; i++) {
+            var switchery = new Switchery(elems[i],{ size: 'small' ,'color':'#0abde3'});
+        }
+        function onchangeIsActive(this_) {
+            var url=$(this_).data('href');
+            axios.get(url).then(function (response) {
+                if (response.data.etat==="true"){
+                    swal("Utilisateur Activé!","","success");
+                    $(this_).prop("checked",true);
+                    //console.log(test);
+                }
+                else if(response.data.etat==="false"){
+                    swal("Utilisateur Désactivé!","",  "warning");
+                    $(this_).prop("checked",false);
+                }
+            })
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#responsive-datatable').DataTable();
+        } );
+    </script>
+{% endblock %}
+

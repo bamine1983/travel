@@ -1,0 +1,57 @@
+security:
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    encoders:
+        App\Entity\User:
+            algorithm: 'sha1'
+    providers:
+        connexion_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+
+           provider:  connexion_provider
+           anonymous: true
+           form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: app_afterlogin
+           remember_me:
+             secret:   '%kernel.secret%'
+
+             path:     app_login
+
+
+           guard:
+                authenticators:
+                   - App\Security\UserAuthenticator
+                   - App\Security\LoginFormAuthenticator
+                entry_point: App\Security\LoginFormAuthenticator
+           logout:
+               path: app_logout
+               # where to redirect after logout
+               target: app_login
+
+
+           access_denied_handler: App\Security\AccessDeniedHandler
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }
+
+      - { path: '^/dashboard/admin', roles: ROLE_ADMIN }
+      #- { path: ^ */login, roles: [IS_AUTHENTICATED_ANONIMOUSLY] }
+      #- { path: ^/user, roles: ROLE_USER }
+

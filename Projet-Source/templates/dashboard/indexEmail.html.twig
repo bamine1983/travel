@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/switchery/dist/switchery.css/switchery.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/lightbox2/dist/css/lightbox.min.css') }}">
+{% endblock %}
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+    <!-- DOM dataTable -->
+
+    <div class="widget">
+        <header class="widget-header ">
+            <strong class="widget-title">Gestion Emails</strong>
+        </header><!-- .widget-header -->
+        <hr class="widget-separator">
+        <div class="widget-body ">
+            <div class="table-responsive">
+                <table id="responsive-datatable" data-plugin="DataTable" data-options="{
+									responsive: true,
+									keys: true
+								}" class="table table-striped display" >
+                    <thead>
+                    <tr >
+                        <th>Type</th>
+                        <th>User</th>
+                        <th>Send From</th>
+                        <th>Cc</th>
+                        <th>Bcc</th>
+                        <th>Modifier</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for email in emails %}
+                        <tr>
+                            <td> {{ email.type }}</td>
+                            <td>{{ email.user}}</td>
+                            <td>{{ email.sendFrom }}</td>
+                            <td>{{ email.cc }}</td>
+                            <td>{{ email.bcc }}</td>
+                            <td>
+                                <a href="{{ path('editeEmail',{'id':email.id}) }}">Editer</a>
+                            </td>
+                            <!--<td>
+                                <button id="{{ email.id }}"  type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop" onclick="onClickListe(this)" data-href="{{ path('gestionemailuser', {'type': email.user }) }}">
+                                    Envoyer
+                                </button>
+                                <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">Listes des Utilisateurs</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form action="{{ path('sendEmail') }}" method="post">
+                                                <div class="modal-body">
+                                                    <table id="responsive-datatable" data-plugin="DataTable" data-options="{
+                                        responsive: true,
+                                        keys: true
+                                    }" class="table table-striped display" >
+                                                        <thead>
+                                                        <tr >
+                                                            <th><input type="checkbox" id="checkPartent" onclick="ckeckAll()"></th>
+                                                            <th>Nom</th>
+                                                            <th>Email</th>
+                                                            <th>Poste</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="model_table">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary" onsubmit="sendEmail()">Envoyer</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>-->
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div><!-- .widget-body -->
+    </div><!-- .widget -->
+
+{% endblock %}
+{% block javascripts %}
+    <script>
+        function onClickListe(this_) {
+            var url=$(this_).data('href');
+            axios.get(url).then(function (response) {
+                document.getElementById("model_table").innerHTML='';
+                for (var v of response.data.table) {
+                    document.getElementById("model_table").innerHTML+="<tr><td><input name='"+v.id+"' value='"+$(this_).prop("id")+"' type=\"checkbox\" id='"+v.id+"' class=\"checkbox\"></td><td>"+v.prenom+" "+v.nom+"</td><td>"+v.email+"</td><td>"+v.poste+"</td></tr>";
+                }
+            })
+        }
+    </script>
+    <script type="text/javascript">
+        function ckeckAll() {
+            $(document).ready(function () {
+                $('#checkPartent').on('click', function () {
+                    if (this.checked) {
+                        $('.checkbox').each(function () {
+                            this.checked = true;
+                        });
+                    } else {
+                        $('.checkbox').each(function () {
+                            this.checked = false;
+                        });
+                    }
+                });
+
+                $('.checkbox').on('click', function () {
+                    if ($('.checkbox:checked').length == $('.checkbox').length) {
+                        $('#checkPartent').prop('checked', true);
+                    } else {
+                        $('#checkPartent').prop('checked', false);
+                    }
+                });
+            });
+        }
+    </script>
+    <script>
+        function sendEmail() {
+            var elems = document.querySelectorAll('.checkbox');
+            for (v of elems){
+                alert(v.checked);
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#responsive-datatable').DataTable();
+        } );
+    </script>
+{% endblock %}
+

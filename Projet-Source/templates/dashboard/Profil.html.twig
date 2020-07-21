@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello !{% endblock %}
+
+{% block body %}
+<section class="app-content">
+    {{ form_start(ProfilForm) }}
+    <div class="col-md-6">
+        <div class="widget">
+            <header class="widget-header">
+                <h3>{{ agence.NomAgence }}  </h3>
+                <h6 class="widget-title">Informations</h6>
+            </header><!-- .widget-header -->
+            <hr class="widget-separator">
+
+            <div class="widget-body ">
+
+                    <div class="form-group">
+
+                        <label for="nom" >Nom:</label>
+                        {{ form_widget(ProfilForm.nom, {'attr': {'value': user.nom ,'id':'nom','readonly':true}}) }}
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for=" prenom"> Prenom:</label>
+                        {{ form_widget(ProfilForm.prenom, {'attr': {'value': user.prenom ,'id':'prenom','readonly':true}}) }}
+                    </div>
+                    <div class="form-group">
+                        <label for=" poste"> Poste:</label>
+                        {{ form_widget(ProfilForm.poste, {'attr': {'value': user.poste ,'id':'poste','readonly':true}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for=" inscrip"> Date d'inscription:</label>
+                        {{ form_widget(ProfilForm.inscription, {'attr': {'value': user.inscription |date('Y-m-d') ,'id':'inscrip','readonly':true}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for=" nais"> Date de naissance:</label>
+                        {{ form_widget(ProfilForm.dateNaissance, {'attr': {'value': user.dateNaissance |date('Y-m-d') ,'id':'nais','readonly':true}}) }}
+                    </div>
+                    <div class="form-group">
+                        <a href="{{ path('agences') }}"><button type="button" class="btn  mw-md btn-dark btn-sm">Lister les agences</button></a>
+                    </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="widget">
+            <header class="widget-header">
+                <h3>Contact </h3>
+                <h6 class="widget-title"> {{ user.nom }} {{ user.prenom  }} </h6>
+            </header><!-- .widget-header -->
+            <hr class="widget-separator">
+
+            <div class="widget-body ">
+                <div class="form-group">
+                    <label for=" email"> Email:</label>
+                    {{ form_widget(ProfilForm.email, {'attr': {'value': user.email ,'id':'email','readonly':true}}) }}
+                </div>
+
+                <div class="form-group">
+                    <label for=" telephone"> Téléphone:</label>
+                    {{ form_widget(ProfilForm.telephone, {'attr': {'value': user.telephone ,'id':'telephone','readonly':true}}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(ProfilForm) }}
+</section>
+{% endblock %}
+
+

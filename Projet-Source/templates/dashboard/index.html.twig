@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/switchery/dist/switchery.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/lightbox2/dist/css/lightbox.min.css') }}">
+{% endblock %}
+{% block body %}
+{% if app.user.role=='Editeur' %}
+    <div class="widget">
+        <header class="widget-header ">
+            <strong class="widget-title">Bonjour  {{app.user.prenom }} {{ app.user.nom }}</strong>&nbsp
+        </header><!-- .widget-header -->
+        <hr class="widget-separator">
+        <div class="widget-body ">
+           <p>{{ app.user.role }}</p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus consequuntur, corporis et ex, facilis illo, maxime nostrum officia officiis perspiciatis quas similique voluptate? Aliquid doloribus iure reprehenderit sit totam, unde?
+        </div>
+    </div><!-- .widget-body -->
+    </div><!-- .widget -->
+{% else %}
+    <div class="widget">
+        <header class="widget-header ">
+            <strong class="widget-title">Bonjour {{app.user.prenom }} {{ app.user.nom }}</strong>&nbsp
+        </header><!-- .widget-header -->
+        <hr class="widget-separator">
+        <div class="widget-body ">
+            <p>{{ app.user.role }}</p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus consequuntur, corporis et ex, facilis illo, maxime nostrum officia officiis perspiciatis quas similique voluptate? Aliquid doloribus iure reprehenderit sit totam, unde?
+        </div>
+    </div><!-- .widget-body -->
+    </div><!-- .widget -->
+{% endif %}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}

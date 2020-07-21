@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/switchery/dist/switchery.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/lightbox2/dist/css/lightbox.min.css') }}">
+{% endblock %}
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+    <!-- DOM dataTable -->
+
+    <div class="widget">
+        <header class="widget-header ">
+            <strong class="widget-title">Agences</strong>&nbsp;&nbsp;<a href="{{ path('createAgence') }}"><button class="btn btn-primary">Nouvelle agence </button></a>
+        </header><!-- .widget-header -->
+        <hr class="widget-separator">
+        <div class="widget-body ">
+            <div class="table-responsive">
+                <table id="responsive-datatable" data-plugin="DataTable" data-options="{
+									responsive: true,
+									keys: true
+								}" class="table table-striped display" >
+                    <thead>
+                    <tr >
+                        <th>Nom de l'agence </th>
+                        <th>Ville</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                        <th>Utilisateur</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for agence in agences %}
+                        <tr>
+                            <td> {{ agence.NomAgence }} </td>
+                            <td>{% for ville in villes %}
+                                     {% if agence.Ville == ville   %}
+                                         {{ ville.name }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>{{ agence.Telephone}}</td>
+
+                            <td>{{ agence.Email }}</td>
+
+                            <td>
+                                <a href="{{  path('profil', {'id': agence.Utilisateur.id }) }}">
+                                    {{ agence.Utilisateur.nom  }} {{ agence.Utilisateur.prenom  }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ path('editAgence',{'id':agence.id}) }}">Editer</a>
+                                <input type="checkbox" class="js-switch" id="cb{{ agence.id }}" data-switchery="true" data-size="small" onchange="onchangeIsActive(this)" data-href="{{ path('isAGactive', {'id': agence.id }) }}" {% if agence.etat %}checked{% endif %} />
+                            </td>
+
+
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div><!-- .widget-body -->
+    </div><!-- .widget -->
+
+{% endblock %}
+{% block javascripts %}
+
+    <script>
+        var elems = document.querySelectorAll('.js-switch');
+        for (var i = 0; i < elems.length; i++) {
+            var switchery = new Switchery(elems[i],{ size: 'small' ,'color':'#0abde3'});
+        }
+        function onchangeIsActive(this_) {
+            var url=$(this_).data('href');
+            axios.get(url).then(function (response) {
+                if (response.data.etat==="true"){
+                    swal(" Agence Activée!","","success");
+                    $(this_).prop("checked",true);
+                    //console.log(test);
+                }
+                else if(response.data.etat==="false"){
+                    swal(" Agence Désactivée!","",  "warning");
+                    $(this_).prop("checked",false);
+                }
+            })
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#responsive-datatable').DataTable();
+        } );
+    </script>
+{% endblock %}
+

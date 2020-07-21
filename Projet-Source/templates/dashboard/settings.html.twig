@@ -1,0 +1,126 @@
+
+    {% extends 'base.html.twig' %}
+    {% block stylesheet %}
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/switchery/dist/switchery.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/lightbox2/dist/css/lightbox.min.css') }}">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+        <meta name="description" content="Admin, Dashboard, Bootstrap" />
+        <link rel="shortcut icon" sizes="196x196" href="{{ asset('Infinity/assets/images/logo.png') }}">
+        <link rel="stylesheet" href="{{ asset('Infinity/libs/bower/font-awesome/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('Infinity/libs/bower/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('Infinity/libs/bower/animate.css/animate.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('Infinity/assets/css/bootstrap.css') }}">
+        <link rel="stylesheet" href="{{ asset('Infinity/assets/css/core.css') }}">
+        <link rel="stylesheet" href="{{ asset('Infinity/assets/css/misc-pages.css') }}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800,900,300">
+    {% endblock %}
+
+    {% block body %}
+
+        <section class="app-content" sytle="margin-left:70%">
+
+        <div class="col-md-6">
+            <div class="widget">
+                <header class="widget-header">
+                    <strong class="widget-title" style="padding-right: 6cm;">Page de paramètres</strong>
+                    <strong>Mode maintenance&nbsp;&nbsp;</strong>
+                    <input  type="checkbox" id="modeMaint" class="js-switch"  data-switchery="true" {% if setting.ModeMaintenance %} checked {% endif %}  data-size="small" onchange="onchangeIsActive(this)" data-href="{{ path('maintenance') }}"  >
+                </header><!-- .widget-header -->
+                <hr class="widget-separator">
+
+                <div class="widget-body ">
+                    {{ form_start(form) }}
+                    <div class="form-group">
+                        <br>
+                        <div class="checkbox checkbox-primary checkbox-inline">
+                            <strong>Inscription&nbsp;&nbsp;</strong>
+                            <input type="checkbox" id="inscription" class="js-switch form-control"  data-switchery="true" {% if setting.inscription %} checked {% endif %}  data-size="small" onchange="isInscriptionActive(this)" data-href="{{ path('isInscriptionActive') }}">
+                        </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.NomSite) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.Favicon) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.Logo) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.DureeSessions) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.DureeInactivite) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.fuseauHoraire) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.Sauvegarder) }}
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+            <div class="col-md-6">
+                <div class="widget">
+                    <header class="widget-header">
+                        <strong class="widget-title">Logo</strong><strong class="widget-title" style="padding-left: 12cm;">Favicon</strong>
+                    </header><!-- .widget-header -->
+                    <hr class="widget-separator">
+                    <div class="widget-body">
+                        <img  style="border: 1px darkgrey ridge;border-radius: 15px;" id="logo" src="{{ asset('web/uploads/logo/'~setting.Logo)}}" alt="no image" height="200" width="200">
+                        <div class="avatar avatar-xl avatar-circle">
+                            <img  style="border: 1px darkgrey ridge;border-radius: 15px;margin-left:7.7cm; " id="logo" src="{{ asset('web/uploads/logo/'~setting.Favicon)}}" alt="no image" height="200" width="200">
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+    {% endblock %}
+{% block javascripts %}
+    <script>
+        var elems = document.querySelectorAll('.js-switch');
+        for (var i = 0; i < elems.length; i++) {
+            var switchery = new Switchery(elems[i],{ size: 'small' ,'color':'#0abde3'});
+        }
+        function onchangeIsActive(this_) {
+            var url=$(this_).data('href');
+            axios.get(url).then(function (response) {
+                if (response.data.ModeMaintenance==="true"){
+                    swal(" Mode maintenance Activée!","","success").then(function(){
+                    });
+                    $(this_).prop("checked",true);
+                }
+                else if(response.data.ModeMaintenance==="false"){
+                    swal(" Mode maintenance Désactivée!","",  "warning").then(function(){
+                    });
+                    $(this_).prop("checked",false);
+                }
+            })
+        }
+    </script>
+    <script>
+        function isInscriptionActive(this_) {
+            var url=$(this_).data('href');
+            axios.get(url).then(function (response) {
+                if (response.data.inscription==="true"){
+                    swal(" Inscription Activée!","","success");
+                    $(this_).prop("checked",true);
+                }
+                else if(response.data.inscription==="false"){
+                    swal(" Inscription Désactivée!","",  "warning");
+                    $(this_).prop("checked",false);
+                }
+            })
+        }
+    </script>
+
+{% endblock %}
+
+
+
+
+

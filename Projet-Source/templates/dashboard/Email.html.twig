@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/switchery/dist/switchery.css/switchery.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Infinity/libs/bower/lightbox2/dist/css/lightbox.min.css') }}">
+{% endblock %}
+{% block body %}
+<section class="app-content">
+    {{ form_start(form) }}
+    <div class="col-md-6">
+        <div class="widget">
+            <header class="widget-header">
+                <strong class="widget-title">Modification d'Email</strong>
+            </header><!-- .widget-header -->
+            <hr class="widget-separator">
+            <div class="widget-body">
+                <div class="form-group">
+                    {{ form_row(form.Type) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.Main) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.sendFrom) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.cc) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.bcc) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.User) }}
+                </div>
+                <div>
+                    {{ form_row(form.Sauvegarder) }}
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>
+    {{ form_end(form) }}
+    {% endblock %}
+{% block javascripts %}
+    <script>
+        var elems = document.querySelectorAll('.js-switch');
+        for (var i = 0; i < elems.length; i++) {
+            var switchery = new Switchery(elems[i],{ size: 'small' ,'color':'#0abde3'});
+        }
+        function onchangeIsActive(this_) {
+            var url=$(this_).data('href');
+            axios.get(url).then(function (response) {
+                if (response.data.etat==="true"){
+                    swal("Utilisateur Activé!","","success");
+                    $(this_).prop("checked",true);
+                    //console.log(test);
+                }
+                else if(response.data.etat==="false"){
+                    swal("Utilisateur Désactivé!","",  "warning");
+                    $(this_).prop("checked",false);
+                }
+            })
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#responsive-datatable').DataTable();
+        } );
+    </script>
+{% endblock %}
+

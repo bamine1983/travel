@@ -1,0 +1,194 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Nouvel utilisateur!{% endblock %}
+{% block body %}
+
+    <section class="app-content">
+        {{ form_start(form) }}
+        <div class="col-md-6">
+            <div class="widget">
+
+                <header class="widget-header">
+                    <h4 class="widget-title"><small>{{ user.prenom }}&nbsp;&nbsp;{{ user.nom }}</small></h4>
+                </header><!-- .widget-header -->
+                <hr class="widget-separator">
+                <div class="widget-body">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        {{ form_widget(form.email,  {'attr' : {'placeholder' : "Email"},"id":"email"}) }}
+                        {{ form_errors(form) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Mot de passe</label>
+                        {{ form_widget(form.password, {'attr' : {'oninput' : "passValidation()"},'id':"psswdId",'value':oldpassword})}}
+                    </div>
+                    {% if form_errors(form.password) %}
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <strong>Erreur !</strong><span>{{form_errors(form.password)}}</span>
+                        </div>
+                    {% endif %}
+                    <div class="form-group">
+                        <table>
+                            <tr>
+                                <td style="margin-left: 2cm">
+                                    <small style="color: black"  id="AE"> <i class="fa fa-check-circle-o"  aria-hidden="true"></i>  &nbsp;Aucun espace</small>
+                                </td>
+                                <td style="margin-left: 2cm;padding-left: 8cm;">
+
+                                    <small style="color: black" id="Min"><i class="fa fa-check-circle-o" aria-hidden="true"></i> &nbsp;1 miniscule</small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="margin-left: 2cm">
+                                    <small style="color: black" id="Maj"><i class="fa fa-check-circle-o" aria-hidden="true"></i> &nbsp;1 majuscule</small>
+                                </td>
+                                <td style="margin-left: 2cm;padding-left: 8cm;">
+                                    <small style="color: black" id="Chif"><i class="fa fa-check-circle-o" aria-hidden="true"></i> &nbsp;1 chifre</small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="margin-left: 2cm">
+                                    <small style="color: black" id="Char"><i class="fa fa-check-circle-o" aria-hidden="true"></i> &nbsp;8 caractères</small>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="form-group">
+                        <input type="button"  class="btn btn-dark" style="margin-left: 11cm"  data-href="{{ path('genPass') }}" onclick="generatePass(this)" value="Générer" >
+                    </div>
+                    <div class="form-group">
+                        {% if app.user.role=='Administrateur' %}
+                        {{ form_row(form.role) }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <a href="{{ path('dashboard_admin') }}"><button type="button" class="btn  mw-md btn-primary btn-sm">Retour</button></a>
+                    </div>
+                </div><!-- .widget-body -->
+            </div><!-- .widget -->
+        </div><!-- END column -->
+
+        <div class="col-md-6">
+            <div class="widget">
+                <header class="widget-header">
+                    <h4 class="widget-title">Contact</h4>
+                </header><!-- .widget-header -->
+                <hr class="widget-separator">
+                <div class="widget-body">
+                    <div class="form-group">
+                        <label for="email">Nom</label>
+                        {{ form_widget(form.nom, {'attr' : {'placeholder' : "Nom"}}) }}
+                    </div>
+                    {% if form_errors(form.nom) %}
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <strong>Erreur !</strong><span>{{form_errors(form.nom)}}</span>
+                        </div>
+                    {% endif %}
+                    <div class="form-group"><div class="form-group"></div>
+                        <label for="email">Prénom</label>
+                        {{ form_widget(form.prenom, {'attr' : {'placeholder' : "Prénom"}}) }}
+                    </div>
+                    {% if form_errors(form.prenom) %}
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <strong>Erreur !</strong><span>{{form_errors(form.prenom)}}</span>
+                        </div>
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="email">Numéro de téléphone</label>
+                        {{ form_widget(form.telephone, {'attr' : {'placeholder' : "Numéro de téléphone"}}) }}
+                    </div>
+                    {% if form_errors(form.telephone) %}
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <strong>Erreur !</strong><span>{{form_errors(form.telephone)}}</span>
+                        </div>
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="email">Date de naissace</label>
+                        {{ form_widget(form.dateNaissance) }}
+                        {{ form_errors(form.dateNaissance) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Poste occupé</label>
+                        {{ form_widget(form.poste, {'attr' : {'placeholder' : "Poste Occupé"}}) }}
+                        {{ form_errors(form.poste) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.Sauvegarder) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+        <!-- .row -->
+    </section><!-- #dash-content -->
+{% endblock %}
+{% block javascripts %}
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <script>
+        function passValidation() {
+            var password = document.getElementById("psswdId").value;
+
+            var AE   = document.getElementById("AE").  valueOf();
+            var Min  = document.getElementById("Min"). valueOf();
+            var Maj  = document.getElementById("Maj"). valueOf();
+            var Chif = document.getElementById("Chif").valueOf();
+            var Char = document.getElementById("Char").valueOf();
+
+            if (password.match(/\s/)) { AE.style.color = "#F44336";}
+            else{ AE.style.color = "#3ae374";}
+
+            if (password.match(/[A-Z]/)) { Maj.style.color = "#3ae374";}
+            else{ Maj.style.color = "#F44336";}
+
+            if (password.match(/[a-z]/)) { Min.style.color = "#3ae374";}
+            else{Min.style.color = "#F44336";}
+
+            if (password.match(/[0-9]/)) {Chif.style.color = "#3ae374";}
+            else{Chif.style.color = "#F44336";}
+
+            if (password.length<8) {Char.style.color = "#F44336";}
+            else {Char.style.color = "#3ae374";}
+
+        }
+        function generatePass(this_) {
+            var url=$(this_).data('href');
+            axios.get(url).then(function (response) {
+                if (response) {
+                    Swal.fire({
+                        title: '<strong>Mot de passe<strong>',
+                        icon: 'info',
+                        html:
+                            '<input type="text" id="randpass" class="form-control" readonly value="' + response.data.RandPass + '" >',
+                        showCloseButton: false,
+                        showCancelButton: false,
+                        focusConfirm: false,
+                        confirmButtonColor: '#0000',
+                        confirmButtonText:
+                            '<button type="button" onclick="copyToClipboard()" class="btn btn-outline btn-dark"><i class="fa fa-file"></i>&nbsp;&nbsp;Copier</button>',
+                    })
+                }
+            })
+        }
+        function copyToClipboard() {
+            var message = document.getElementById("randpass");
+            message.select();
+            document.execCommand('copy');
+            document.getElementById('psswdId').value=message.value;
+
+            AE.style.color =   "#3ae374";
+            Maj.style.color =  "#3ae374";
+            Min.style.color =  "#3ae374";
+            Chif.style.color = "#3ae374";
+            Char.style.color = "#3ae374";
+
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Infinity - Bootstrap Admin Template</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="description" content="Admin, Dashboard, Bootstrap" />
+    <link rel="shortcut icon" sizes="196x196" href="{{ asset('Infinity/assets/images/logo.png') }}">
+    <link rel="stylesheet" href="{{ asset('Infinity/libs/bower/font-awesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Infinity/libs/bower/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Infinity/libs/bower/animate.css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Infinity/assets/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('Infinity/assets/css/core.css') }}">
+    <link rel="stylesheet" href="{{ asset('Infinity/assets/css/misc-pages.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800,900,300">
+</head>
+<body class="simple-page">
+<div class="simple-page-wrap">
+    <div class="simple-page-logo animated swing">
+        <a href="">
+            <span><i class="fa fa-gg"></i></span>
+            <span>Travel Agency</span>
+        </a>
+    </div><!-- logo -->
+    <div class="simple-page-form animated flipInY" id="login-form">
+        <h4 class="form-title m-b-xl text-center">Inscription</h4>
+        {{ form_start(registrationForm) }}
+        <div class="form-group">
+            {{ form_widget(registrationForm.email) }}
+            {{ form_errors(registrationForm.email) }}
+        </div>
+        <div class="form-group">
+            {{ form_widget(registrationForm.password, {'attr' : {'oninput' : "passValidation()"},'id':"psswdId"}) }}
+        </div>
+        {% if form_errors(registrationForm.password) %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <strong>Erreur !</strong><span>{{form_errors(registrationForm.password)}}</span>
+            </div>
+        {% endif %}
+        <div class="form-group">
+            <table>
+                <tr>
+                    <td style="">
+                        <small style="color: black;"  id="AE"> <i class="fa fa-check-circle-o"  aria-hidden="true"></i>  &nbsp;Aucun espace</small>
+                    </td>
+                    <td style="padding-left: 4cm;">
+                        <small style="color: black" id="Min"><i class="fa fa-check-circle-o" aria-hidden="true"></i> &nbsp;1 miniscule</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="">
+                        <small style="color: black" id="Maj"><i class="fa fa-check-circle-o" aria-hidden="true"></i> &nbsp;1 majuscule</small>
+                    </td>
+                    <td style="padding-left: 4cm;">
+                        <small style="color: black" id="Chif"><i class="fa fa-check-circle-o" aria-hidden="true"></i> &nbsp;1 chifre</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td >
+                        <small style="color: black" id="Char"><i class="fa fa-check-circle-o" aria-hidden="true"></i> &nbsp;8 caractères</small>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+        <div class="form-group">
+            <input type="button"  class="btn btn-dark"   data-href="{{ path('genPass') }}" onclick="generatePass(this)" value="Générer" >
+        </div>
+        {{ form_widget(registrationForm.Sauvegarder) }}
+        {{ form_end(registrationForm) }}
+    </div>
+</div><!-- .simple-page-wrap -->
+</body>
+{% block javascripts %}
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <script>
+        function passValidation() {
+            var password = document.getElementById("psswdId").value;
+            var AE   = document.getElementById("AE").  valueOf();
+            var Min  = document.getElementById("Min"). valueOf();
+            var Maj  = document.getElementById("Maj"). valueOf();
+            var Chif = document.getElementById("Chif").valueOf();
+            var Char = document.getElementById("Char").valueOf();
+            if (password.match(/\s/)) { AE.style.color = "#F44336";}
+            else{ AE.style.color = "#3ae374";}
+            if (password.match(/[A-Z]/)) { Maj.style.color = "#3ae374";}
+            else{ Maj.style.color = "#F44336";}
+            if (password.match(/[a-z]/)) { Min.style.color = "#3ae374";}
+            else{Min.style.color = "#F44336";}
+            if (password.match(/[0-9]/)) {Chif.style.color = "#3ae374";}
+            else{Chif.style.color = "#F44336";}
+            if (password.length<8) {Char.style.color = "#F44336";}
+            else {Char.style.color = "#3ae374";}
+        }
+        function generatePass(this_) {
+            var url=$(this_).data('href');
+            axios.get(url).then(function (response) {
+                if (response) {
+                    Swal.fire({
+                        title: '<strong>Mot de passe<strong>',
+                        icon: 'info',
+                        html:
+                            '<input type="text" id="randpass" class="form-control" readonly value="' + response.data.RandPass + '" >',
+                        showCloseButton: false,
+                        showCancelButton: false,
+                        focusConfirm: false,
+                        confirmButtonColor: '#0000',
+                        confirmButtonText:
+                            '<button type="button" onclick="copyToClipboard()" class="btn btn-outline btn-dark"><i class="fa fa-file"></i>&nbsp;Copier</button>',
+                    })
+                }
+            })
+        }
+        function copyToClipboard() {
+            var message = document.getElementById("randpass");
+            message.select();
+            document.execCommand('copy');
+            document.getElementById('psswdId').value=message.value;
+            AE.style.color =   "#3ae374";
+            Maj.style.color =  "#3ae374";
+            Min.style.color =  "#3ae374";
+            Chif.style.color = "#3ae374";
+            Char.style.color = "#3ae374";
+        }
+    </script>
+{% endblock %}
+</html>
